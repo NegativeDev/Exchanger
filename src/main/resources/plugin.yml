@@ -1,0 +1,6 @@
+name: Exchanger
+version: '${project.version}'
+main: games.negative.exchanger.ExchangerPlugin
+api-version: 1.19
+authors: [ Negative ]
+description: Item Exchanger 

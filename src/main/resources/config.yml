@@ -1,0 +1,7 @@
+exchanger-block:
+  material: TRAPPED_CHEST
+  display_name: "&9&lExchanger Block"
+  lore:
+    - "&7With this block, you have the ability to"
+    - "&7exchange your unwanted items for"
+    - "&7new items!"
