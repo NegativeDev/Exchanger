@@ -4,6 +4,8 @@ import games.negative.exchanger.ExchangerPlugin;
 import games.negative.exchanger.api.Events;
 import games.negative.exchanger.event.ExchangerBlockBreakEvent;
 import games.negative.exchanger.event.ExchangerBlockPlaceEvent;
+import games.negative.framework.util.Utils;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -12,10 +14,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ExchangerPlayerListener implements Listener {
 
@@ -29,10 +33,6 @@ public class ExchangerPlayerListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
-        if (!(block.getState() instanceof TileState tile)) {
-            // Block is not a Tile, so it is clearly not an Exchanger block.
-            return;
-        }
 
         ItemStack hand = event.getItemInHand();
         ItemMeta itemMeta = hand.getItemMeta();
@@ -43,6 +43,19 @@ public class ExchangerPlayerListener implements Listener {
             // Block is not an Exchanger block.
             return;
         }
+
+        Location location = block.getLocation();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Block delayedBlock = location.getBlock();
+                if (delayedBlock.getState() instanceof TileState state) {
+                    PersistentDataContainer data = state.getPersistentDataContainer();
+                    data.set(ExchangerPlugin.EXCHANGER_BLOCK, PersistentDataType.BYTE, (byte) 1);
+                    state.update(true);
+                }
+            }
+        }.runTaskLater(plugin, 1);
 
         // Block is an Exchanger block.
         Events.call(new ExchangerBlockPlaceEvent(player, block));
