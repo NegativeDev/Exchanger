@@ -1,4 +1,16 @@
 package games.negative.exchanger.event;
 
-public class ExchangerBlockBreakEvent {
+import games.negative.framework.event.PluginEvent;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+@RequiredArgsConstructor
+@Getter
+public class ExchangerBlockBreakEvent extends PluginEvent {
+
+    private final Player player;
+    private final Block block;
+
 }

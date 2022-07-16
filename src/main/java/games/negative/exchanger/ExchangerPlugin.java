@@ -2,10 +2,14 @@ package games.negative.exchanger;
 
 import games.negative.exchanger.command.CommandExchanger;
 import games.negative.exchanger.listener.ExchangerPlayerListener;
+import games.negative.exchanger.runnable.ExchangerBlockParticleRunnable;
 import games.negative.framework.BasePlugin;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public final class ExchangerPlugin extends BasePlugin {
 
@@ -15,9 +19,9 @@ public final class ExchangerPlugin extends BasePlugin {
     // This is the key we will be using to identify our custom "block".
     public static NamespacedKey EXCHANGER_BLOCK;
 
-    // This is the key we will be using to identify invisible shulkers
-    // that are used to give Exchanger blocks a special and cool glowing effect.
-    public static NamespacedKey EXCHANGER_SHULKER;
+    // This is the representation of the Exchanger Block Item.
+    @Getter @Setter
+    private ItemStack exchangerBlock;
 
     @Override
     public void onEnable() {
@@ -27,8 +31,6 @@ public final class ExchangerPlugin extends BasePlugin {
         instance = this;
         // Initialize the key we will be using to identify our custom "block"
         EXCHANGER_BLOCK = new NamespacedKey(this, "exchanger");
-        // Initialize the key we will be using to identify invisible shulkers
-        EXCHANGER_SHULKER = new NamespacedKey(this, "exchanger_shulker");
 
         loadFiles(this, "config.yml");
         reloadConfig();
@@ -38,8 +40,10 @@ public final class ExchangerPlugin extends BasePlugin {
         );
 
         registerListeners(
-                new ExchangerPlayerListener()
+                new ExchangerPlayerListener(this)
         );
+
+        new ExchangerBlockParticleRunnable().runTaskTimer(this, 0, 20);
     }
 
     @Override

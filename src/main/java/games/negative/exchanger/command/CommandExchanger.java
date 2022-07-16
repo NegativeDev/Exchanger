@@ -24,7 +24,6 @@ import java.util.List;
 public class CommandExchanger extends Command {
 
     private final ExchangerPlugin plugin;
-    private ItemStack exchangerBlock;
 
     public CommandExchanger(ExchangerPlugin plugin) {
         this.plugin = plugin;
@@ -53,7 +52,7 @@ public class CommandExchanger extends Command {
                 return;
             }
 
-            player.getInventory().addItem(exchangerBlock.clone());
+            player.getInventory().addItem(plugin.getExchangerBlock().clone());
             Locale.EXCHANGER_BLOCK_RECEIVED.send(player);
             player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 
@@ -86,14 +85,15 @@ public class CommandExchanger extends Command {
         List<String> lore = block.getStringList("lore");
 
         assert material != null;
-        exchangerBlock = new ItemStack(material);
-        ItemMeta itemMeta = exchangerBlock.getItemMeta();
+        ItemStack item = new ItemStack(material);
+        ItemMeta itemMeta = item.getItemMeta();
         assert itemMeta != null;
         itemMeta.setDisplayName(Utils.color(displayName));
         itemMeta.setLore(Utils.color(lore));
 
         PersistentDataContainer data = itemMeta.getPersistentDataContainer();
         data.set(ExchangerPlugin.EXCHANGER_BLOCK, PersistentDataType.BYTE, (byte) 1);
-        exchangerBlock.setItemMeta(itemMeta);
+        item.setItemMeta(itemMeta);
+        plugin.setExchangerBlock(item);
     }
 }
